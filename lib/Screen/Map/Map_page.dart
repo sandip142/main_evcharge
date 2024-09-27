@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:main_evcharge/Utils.dart/const.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
@@ -28,8 +29,8 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GoogleMap(
-        initialCameraPosition: const CameraPosition(
-          target: LatLng(21.3496, 74.8797),
+        initialCameraPosition:CameraPosition(
+          target: LatLng(Const.userLatitude,Const.userLongitude),
           zoom: 13,
         ),
         onMapCreated: (GoogleMapController controller) {

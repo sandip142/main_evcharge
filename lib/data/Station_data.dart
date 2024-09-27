@@ -1,6 +1,11 @@
 import 'package:main_evcharge/Model/station_model.dart';
 
 class StationData {
+
+StationModel getStationById(String id){
+ return chargingStations.firstWhere((station) => station.id == id);
+} 
+
   List<StationModel> chargingStations = [
     StationModel(
       id: '1',

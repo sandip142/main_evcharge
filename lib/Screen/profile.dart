@@ -9,11 +9,13 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          _Background(),
-          _ProfileInfo(),
-        ],
+      body: Center(
+        child: Stack(
+          children: [
+            _Background(),
+            _ProfileInfo(),
+          ],
+        ),
       ),
     );
   }

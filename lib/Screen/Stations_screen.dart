@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_evcharge/Screen/Auth/login.dart';
+import 'package:main_evcharge/Screen/detail_screen.dart';
 import 'package:main_evcharge/Screen/profile.dart';
+import 'package:main_evcharge/Utils.dart/const.dart';
 import 'package:main_evcharge/calc.dart/Distance_calcutator.dart';
 import 'package:main_evcharge/data/Image_data.dart';
 import 'package:main_evcharge/data/Station_data.dart';
@@ -17,8 +19,8 @@ class StationsScreen extends StatefulWidget {
 class _StationsScreenState extends State<StationsScreen> {
   StationData st = StationData();
   ImagePathData img = ImagePathData();
-  double userLatitude = 19.0760;
-  double userLongitude = 72.8777;
+
+  
 
   Future<void> logout(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
@@ -126,14 +128,22 @@ class _StationsScreenState extends State<StationsScreen> {
         itemBuilder: (context, index) {
           //function to calculate the distance between all station with your curent location
           double dis = DistanceCalcutator.calculateDistance(
-            userLatitude,
-            userLongitude,
+            Const.userLatitude,
+            Const.userLongitude,
             st.chargingStations[index].latitude,
             st.chargingStations[index].longitude,
           );
           //that is widget for card with detail
           return InkWell(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      DetailScreen(id: st.chargingStations[index].id),
+                ),
+              );
+            },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ChargingStationCard(
