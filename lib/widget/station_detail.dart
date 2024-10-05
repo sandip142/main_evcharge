@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:main_evcharge/Screen/Map/Map_page.dart';
+import 'package:main_evcharge/Screen/ask_detail_form.dart';
 import 'package:main_evcharge/Utils.dart/const.dart';
 import 'package:main_evcharge/calc.dart/Distance_calcutator.dart'; // For animation
 
@@ -39,15 +41,10 @@ class _StationDetailsScreenState extends State<StationDetailsScreen> {
 
   double pricePerKW = 5; // Assume price per KW
 
- 
   @override
   Widget build(BuildContext context) {
- double dis = DistanceCalcutator.calculateDistance(
-            Const.userLatitude,
-            Const.userLongitude,
-           widget.latitude,
-           widget.longitude
-          );
+    double dis = DistanceCalcutator.calculateDistance(Const.userLatitude,
+        Const.userLongitude, widget.latitude, widget.longitude);
 
     totalCost = chargingCapacity * pricePerKW;
 
@@ -79,11 +76,12 @@ class _StationDetailsScreenState extends State<StationDetailsScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                    Text(
-            widget.stationName,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 25),
+                  Text(
+                    widget.stationName,
+                    style: const TextStyle(
+                        fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 25),
                   Text(widget.stationAddress,
                       style: const TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
@@ -103,15 +101,21 @@ class _StationDetailsScreenState extends State<StationDetailsScreen> {
                 child: Column(
                   children: [
                     InkWell(
-                      onTap: (){},
+                      onTap: () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                              builder: (context) => const MapPage()),
+                        );
+                      },
                       child: Container(
                         height: 180,
-                        child: Lottie.asset("assets/animation/Map-animation.json"),
+                        child:
+                            Lottie.asset("assets/animation/Map-animation.json"),
                       ),
                     ),
-                       Text(
+                    Text(
                       "${dis.toInt().toString()} Km away",
-                      style:const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -150,7 +154,6 @@ class _StationDetailsScreenState extends State<StationDetailsScreen> {
           // Animated Payment Button
           Center(
             child: ElevatedButton(
-            
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 103, 208, 105),
                 padding:
@@ -161,18 +164,9 @@ class _StationDetailsScreenState extends State<StationDetailsScreen> {
               ),
               onPressed: () {
                 // Handle payment logic
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Payment Successful'),
-                    content:
-                        Lottie.asset('assets/animation/Payment-success.json'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('OK'),
-                      ),
-                    ],
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => BookingForm(id: widget.id),
                   ),
                 );
               },

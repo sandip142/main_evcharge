@@ -4,7 +4,8 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
     <application
         android:label="main_evcharge"
         android:name="${applicationName}"
@@ -26,8 +27,7 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
-               <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="AIzaSyCihhfphDAnCga7sp45NdCWQJ5q_WXV6Kw"/>
+
               <!-- <meta-data
           android:name="io.flutter.embedding.android.PlatformView"
          android:value="virtual_display"/> -->
@@ -41,6 +41,9 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <meta-data android:name="com.google.android.geo.API_KEY"
+       android:value="AIzaSyATK6F-1by3gJz3KP_Fs6gQUHuGe3utuiA"/>   
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

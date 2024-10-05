@@ -7,6 +7,7 @@ import 'package:main_evcharge/Utils.dart/const.dart';
 import 'package:main_evcharge/calc.dart/Distance_calcutator.dart';
 import 'package:main_evcharge/data/Image_data.dart';
 import 'package:main_evcharge/data/Station_data.dart';
+import 'package:main_evcharge/services/firebase_email.dart';
 import 'package:main_evcharge/widget/station_card.dart';
 
 class StationsScreen extends StatefulWidget {
@@ -20,7 +21,19 @@ class _StationsScreenState extends State<StationsScreen> {
   StationData st = StationData();
   ImagePathData img = ImagePathData();
 
+void getUserData() async {
+  FirebaseService firebaseService = FirebaseService();
   
+  try {
+    Map<String, String> userDetails = await firebaseService.getUserDetails();
+    print('Email: ${userDetails['email']}');
+    print('Name: ${userDetails['name']}');
+    print('Mobile: ${userDetails['mobile']}');
+  } catch (e) {
+    print(e);
+  }
+}  
+
 
   Future<void> logout(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
@@ -54,7 +67,7 @@ class _StationsScreenState extends State<StationsScreen> {
               height: 100,
             ),
             ListTile(
-              onTap: () {},
+              onTap:getUserData,
               title: const Text(
                 "Update Profile",
                 style: TextStyle(

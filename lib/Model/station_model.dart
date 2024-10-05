@@ -9,6 +9,8 @@ class StationModel {
   final String chargerType;
   final int numberOfChargers;
   final double powerOutput;
+  final bool isBook;
+  final String category;
 
   StationModel({
     required this.id,
@@ -21,5 +23,7 @@ class StationModel {
     required this.chargerType,
     required this.numberOfChargers,
     required this.powerOutput,
+    required this.category,
+    required this.isBook
   });
 }

@@ -1,7 +1,7 @@
 import 'package:main_evcharge/Model/station_model.dart';
 
 class StationData {
-
+                       
 StationModel getStationById(String id){
  return chargingStations.firstWhere((station) => station.id == id);
 } 
@@ -18,6 +18,8 @@ StationModel getStationById(String id){
       chargerType: 'AC Charging',
       numberOfChargers: 4,
       powerOutput: 22.0,
+      isBook:true,
+      category:"two wheeler",
     ),
     StationModel(
       id: '2',
@@ -30,6 +32,8 @@ StationModel getStationById(String id){
       chargerType: 'DC Fast Charging',
       numberOfChargers: 3,
       powerOutput: 50.0,
+      isBook:true,
+      category:"four wheeler",
     ),
     StationModel(
       id: '3',
@@ -42,6 +46,8 @@ StationModel getStationById(String id){
       chargerType: 'Fast Charging',
       numberOfChargers: 5,
       powerOutput: 60.0,
+      isBook:true,
+      category:"two wheeler",
     ),
     StationModel(
       id: '4',
@@ -54,6 +60,8 @@ StationModel getStationById(String id){
       chargerType: 'AC Charging',
       numberOfChargers: 6,
       powerOutput: 30.0,
+      isBook:true,
+      category:"two wheeler",
     ),
     StationModel(
       id: '5',
@@ -66,6 +74,8 @@ StationModel getStationById(String id){
       chargerType: 'DC Fast Charging',
       numberOfChargers: 2,
       powerOutput: 100.0,
+      isBook:true,
+      category:"four wheeler",
     ),
     StationModel(
       id: '6',
@@ -78,6 +88,8 @@ StationModel getStationById(String id){
       chargerType: 'AC Charging',
       numberOfChargers: 3,
       powerOutput: 22.0,
+      isBook:true,
+      category:"four wheeler",
     ),
     StationModel(
       id: '7',
@@ -90,6 +102,8 @@ StationModel getStationById(String id){
       chargerType: 'DC Fast Charging',
       numberOfChargers: 4,
       powerOutput: 120.0,
+      isBook:true,
+      category:"two wheeler",
     ),
   ];
 }

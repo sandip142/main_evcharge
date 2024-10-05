@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:main_evcharge/Function/get_first_model.dart';
+import 'package:main_evcharge/Screen/ask_detail_form.dart';
 import 'package:main_evcharge/data/Station_data.dart';
 import 'package:main_evcharge/widget/station_detail.dart';
 
@@ -12,17 +13,22 @@ class DetailScreen extends StatelessWidget {
     StationData st = StationData();
     final stationModel = st.getStationById(id);
     return Scaffold(
-      body: StationDetailsScreen(
-        id: stationModel.id,
-        stationName: stationModel.stationName,
-        stationAddress: stationModel.stationAddress,
-        latitude: stationModel.latitude,
-        longitude: stationModel.longitude,
-        ownerName: stationModel.ownerName,
-        contactNumber: stationModel.contactNumber,
-        chargerType: stationModel.chargerType,
-        numberOfChargers: stationModel.numberOfChargers,
-        powerOutput: stationModel.powerOutput,
+      body: InkWell(
+        onTap: (){
+           
+        },
+        child: StationDetailsScreen(
+          id: stationModel.id,
+          stationName: stationModel.stationName,
+          stationAddress: stationModel.stationAddress,
+          latitude: stationModel.latitude,
+          longitude: stationModel.longitude,
+          ownerName: stationModel.ownerName,
+          contactNumber: stationModel.contactNumber,
+          chargerType: stationModel.chargerType,
+          numberOfChargers: stationModel.numberOfChargers,
+          powerOutput: stationModel.powerOutput,
+        ),
       ),
     );
   }
