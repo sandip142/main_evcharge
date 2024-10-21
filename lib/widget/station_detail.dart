@@ -16,7 +16,7 @@ class StationDetailsScreen extends StatefulWidget {
   final String chargerType;
   final int numberOfChargers;
   final double powerOutput;
-
+  final bool isBook;
   const StationDetailsScreen({
     super.key,
     required this.id,
@@ -29,6 +29,7 @@ class StationDetailsScreen extends StatefulWidget {
     required this.chargerType,
     required this.numberOfChargers,
     required this.powerOutput,
+    required this.isBook,
   });
 
   @override
@@ -54,7 +55,7 @@ class _StationDetailsScreenState extends State<StationDetailsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(
-            height: 60,
+            height: 10,
           ),
           Container(
             height: 200,
@@ -163,10 +164,30 @@ class _StationDetailsScreenState extends State<StationDetailsScreen> {
                 ),
               ),
               onPressed: () {
-                // Handle payment logic
+                if (widget.isBook) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Station Is Already Booked ',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      duration: Duration(seconds: 3),
+                      backgroundColor: Colors.deepPurple,
+                    ),
+                  );
+                }
+                  // Handle payment logic
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                    builder: (context) => BookingForm(id: widget.id),
+                    builder: (context) => BookingForm(
+                      id: widget.id,
+                      ammount: totalCost,
+                      stationName: widget.stationName,
+                    ),
                   ),
                 );
               },

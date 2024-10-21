@@ -6,6 +6,9 @@ class ChargingStationCard extends StatelessWidget {
   final double distance;
   final String imagePath;
   final double rating;
+  final double powerOutput;
+  final String chargerType;
+  final bool isBook;
 
   const ChargingStationCard({
     super.key,
@@ -13,13 +16,17 @@ class ChargingStationCard extends StatelessWidget {
     required this.location,
     required this.distance,
      required this.imagePath,
-    required this.rating
+    required this.rating,
+    required this.powerOutput,
+    required this.chargerType,
+    required this.isBook,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 5,
+      color: isBook?const Color.fromARGB(255, 171, 165, 165):Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
@@ -56,7 +63,7 @@ class ChargingStationCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${distance.toString()} km away',
+                  '${distance.toInt().toString()} km away',
                   style: const TextStyle(fontSize: 14),
                 ),
                 Row(
@@ -73,24 +80,24 @@ class ChargingStationCard extends StatelessWidget {
             const SizedBox(height: 8),
 
             // Additional Information
-            const Row(
+           Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Power'),
-                    Text('50 kW', style: TextStyle(fontSize: 14)),
+                  const  Text('Power'),
+                    Text('${powerOutput.toString()} kW', style: const TextStyle(fontSize: 14)),
                   ],
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Type'),
-                    Text('DC Fast', style: TextStyle(fontSize: 14)),
+                    const Text('Type'),
+                    Text(chargerType, style: const TextStyle(fontSize: 14)),
                   ],
                 ),
-                Column(
+               const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Payment'),

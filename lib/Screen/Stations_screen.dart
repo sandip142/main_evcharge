@@ -20,26 +20,43 @@ class StationsScreen extends StatefulWidget {
 class _StationsScreenState extends State<StationsScreen> {
   StationData st = StationData();
   ImagePathData img = ImagePathData();
+  bool isLoading = true; // To track loading state
 
-void getUserData() async {
-  FirebaseService firebaseService = FirebaseService();
-  
-  try {
-    Map<String, String> userDetails = await firebaseService.getUserDetails();
-    print('Email: ${userDetails['email']}');
-    print('Name: ${userDetails['name']}');
-    print('Mobile: ${userDetails['mobile']}');
-  } catch (e) {
-    print(e);
+  @override
+  void initState() {
+    super.initState();
+    fetchStations(); // Fetch station data when the screen loads
   }
-}  
 
+  // Fetch stations and update the state
+  Future<void> fetchStations() async {
+    try {
+      await st.fetchStationsFromFirebase(); // Fetch data from Firebase
+      setState(() {
+        isLoading = false; // Stop loading after data is fetched
+      });
+    } catch (e) {
+      print('Error fetching stations: $e');
+    }
+  }
 
   Future<void> logout(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => const LoginScreen()),
     );
+  }
+
+  void getUserData() async {
+    FirebaseService firebaseService = FirebaseService();
+    try {
+      Map<String, String> userDetails = await firebaseService.getUserDetails();
+      print('Email: ${userDetails['email']}');
+      print('Name: ${userDetails['name']}');
+      print('Mobile: ${userDetails['mobile']}');
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -57,119 +74,64 @@ void getUserData() async {
               );
             },
             icon: const Icon(Icons.face_retouching_natural),
-          )
+          ),
         ],
       ),
       drawer: Drawer(
         child: Column(
           children: [
-            const SizedBox(
-              height: 100,
-            ),
+            const SizedBox(height: 100),
             ListTile(
-              onTap:getUserData,
-              title: const Text(
-                "Update Profile",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
+              onTap: getUserData,
+              title: const Text("Update Profile", style: TextStyle(fontSize: 20)),
               leading: const Icon(Icons.update),
             ),
             ListTile(
-              onTap: () {},
-              title: const Text(
-                "FingerPrint",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              leading: const Icon(Icons.fingerprint_rounded),
-            ),
-            ListTile(
-              onTap: () {},
-              title: const Text(
-                "Setting",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              leading: const Icon(Icons.settings),
-            ),
-            ListTile(
-              onTap: () {},
-              title: const Text(
-                "Payment",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              leading: const Icon(Icons.payment),
-            ),
-            ListTile(
-              onTap: () {},
-              title: const Text(
-                "Detail",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              leading: const Icon(Icons.details_rounded),
-            ),
-            ListTile(
               onTap: () => logout(context),
-              title: const Text(
-                "Logout",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
+              title: const Text("Logout", style: TextStyle(fontSize: 20)),
               leading: const Icon(Icons.logout),
             ),
           ],
         ),
       ),
-      body: ListView.builder(
-        physics: const ScrollPhysics(),
-        itemCount: st.chargingStations.length,
-        itemBuilder: (context, index) {
-          //function to calculate the distance between all station with your curent location
-          double dis = DistanceCalcutator.calculateDistance(
-            Const.userLatitude,
-            Const.userLongitude,
-            st.chargingStations[index].latitude,
-            st.chargingStations[index].longitude,
-          );
-          //that is widget for card with detail
-          return InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      DetailScreen(id: st.chargingStations[index].id),
-                ),
-              );
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ChargingStationCard(
-                stationName: st.chargingStations[index].stationName,
-                location: st.chargingStations[index].stationAddress,
-                distance: dis.toInt().toDouble(),
-                imagePath: img.imagepaths[index],
-                rating: 4.5,
-              ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator()) // Show loader while fetching data
+          : ListView.builder(
+              itemCount: st.chargingStations.length,
+              itemBuilder: (context, index) {
+                // Calculate the distance between current location and the station
+                double distance = DistanceCalcutator.calculateDistance(
+                  Const.userLatitude,
+                  Const.userLongitude,
+                  st.chargingStations[index].latitude,
+                  st.chargingStations[index].longitude,
+                );
+
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DetailScreen(id: st.chargingStations[index].id),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ChargingStationCard(
+                      stationName: st.chargingStations[index].stationName,
+                      location: st.chargingStations[index].stationAddress,
+                      distance: distance.toDouble(),
+                      imagePath: img.imagepaths[index % img.imagepaths.length], // Prevent index overflow
+                      rating: 4.5,
+                      powerOutput: st.chargingStations[index].powerOutput,
+                      chargerType: st.chargingStations[index].chargerType,
+                      isBook: st.chargingStations[index].isBook,
+                    ),
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }

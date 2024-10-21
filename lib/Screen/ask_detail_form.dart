@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:main_evcharge/data/Station_data.dart';
+import 'package:main_evcharge/Screen/payment_page.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class BookingForm extends StatefulWidget {
   final String id;
+  final double ammount;
+  final String stationName;
   const BookingForm({
     super.key,
     required this.id,
+    required this.ammount,
+    required this.stationName,
   });
 
   @override
@@ -15,7 +19,6 @@ class BookingForm extends StatefulWidget {
 }
 
 class _BookingFormState extends State<BookingForm> {
-
   final _formKey = GlobalKey<FormState>();
   String _vehicleType = 'Two Wheeler';
   DateTime _selectedDate = DateTime.now();
@@ -27,16 +30,16 @@ class _BookingFormState extends State<BookingForm> {
   final _mobileNumberController = TextEditingController();
   CalendarFormat _calendarFormat = CalendarFormat.month;
 
-  Color _fieldFocusColor = const Color.fromARGB(255, 222, 168, 231);
-  Color _buttonHoverColor = const Color.fromARGB(255, 181, 162, 234);
+  final Color _fieldFocusColor = const Color.fromARGB(255, 222, 168, 231);
+  final Color _buttonHoverColor = const Color.fromARGB(255, 181, 162, 234);
 
   @override
   Widget build(BuildContext context) {
-   StationData st = StationData();
-    final stationModel = st.getStationById(widget.id);
+    //  StationData st = StationData();
+    //   final stationModel = st.getStationById(widget.id);
     return Scaffold(
       appBar: AppBar(
-        title:  Text(stationModel.stationName),
+        title: Text(widget.stationName),
         backgroundColor: const Color.fromARGB(255, 197, 173, 238),
       ),
       body: Padding(
@@ -82,29 +85,38 @@ class _BookingFormState extends State<BookingForm> {
               _timePickerSection(),
               const SizedBox(height: 20),
               _animatedButton(
-                label: 'Book Charging Station',
+                label: 'Book and Pay ${widget.ammount.toStringAsFixed(2)}',
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
+                    // Collect form data
                     String bookingDate =
                         DateFormat('yyyy-MM-dd').format(_selectedDate);
                     String bookingStartTime =
                         '${_startTime.hour}:${_startTime.minute}';
                     String bookingEndTime =
                         '${_endTime.hour}:${_endTime.minute}';
+                    Map<String, dynamic> bookingData = {
+                      'stationId': widget.id,
+                      'stationName': widget.stationName,
+                      'name': _nameController.text,
+                      'vehicleType': _vehicleType,
+                      'vehicleModel': _vehicleModelController.text,
+                      'vehiclePlateNumber': _vehiclePlateNumberController.text,
+                      'mobileNumber': _mobileNumberController.text,
+                      'bookingDate': bookingDate,
+                      'startTime': bookingStartTime,
+                      'endTime': bookingEndTime,
+                      'amount': widget.ammount,
+                    };
 
-                    print('Form submitted');
-                    print(stationModel.id);
-                    print(stationModel.stationName);
-                    print(_nameController.text);
-                    print(_vehicleType);
-                    print(_vehicleModelController.text);
-                    print(_vehiclePlateNumberController.text);
-                    print(_mobileNumberController.text);
-                    print(bookingDate);
-                    print('From: $bookingStartTime');
-                    print('To: $bookingEndTime');
-
-                    
+                    // Navigate to Payment Page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            PaymentPage(bookingData: bookingData),
+                      ),
+                    );
                   }
                 },
               ),
