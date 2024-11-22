@@ -3,7 +3,9 @@ import 'package:lottie/lottie.dart';
 import 'package:main_evcharge/Screen/Map/Map_page.dart';
 import 'package:main_evcharge/Screen/ask_detail_form.dart';
 import 'package:main_evcharge/Utils.dart/const.dart';
-import 'package:main_evcharge/calc.dart/Distance_calcutator.dart'; // For animation
+import 'package:main_evcharge/calc.dart/Distance_calcutator.dart';
+import 'package:main_evcharge/data/current_lacation_store.dart';
+import 'package:main_evcharge/widget/charging_point_widget.dart'; // For animation
 
 class StationDetailsScreen extends StatefulWidget {
   final String id;
@@ -41,22 +43,24 @@ class _StationDetailsScreenState extends State<StationDetailsScreen> {
   double totalCost = 0;
 
   double pricePerKW = 5; // Assume price per KW
-
+  double? latitude = LocationStorage().getLatitude();
+  double? longitude = LocationStorage().getLongitude();
   @override
   Widget build(BuildContext context) {
-    double dis = DistanceCalcutator.calculateDistance(Const.userLatitude,
-        Const.userLongitude, widget.latitude, widget.longitude);
+    double dis = DistanceCalcutator.calculateDistance(
+      latitude ?? Const.userLatitude,
+      longitude ?? Const.userLongitude,
+      widget.latitude,
+      widget.longitude,
+    );
 
     totalCost = chargingCapacity * pricePerKW;
 
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(
-            height: 10,
-          ),
           Container(
             height: 200,
             width: double.infinity,
@@ -70,7 +74,23 @@ class _StationDetailsScreenState extends State<StationDetailsScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 5),
+          Expanded(
+            child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 3,
+                itemBuilder: (context, index) {
+                  index = index + 1;
+                  print("stand$index");
+                  return ChargingPoint(
+                    mid: widget.id,
+                    sid: "stand$index",
+                    totalCost: totalCost,
+                    stationName: widget.stationName,
+                  );
+                }),
+          ),
+          //const SizedBox(height: 5),
           // Station Details
           Row(
             children: [
@@ -82,7 +102,7 @@ class _StationDetailsScreenState extends State<StationDetailsScreen> {
                     style: const TextStyle(
                         fontSize: 22, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 25),
+                  const SizedBox(height: 5),
                   Text(widget.stationAddress,
                       style: const TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
@@ -179,17 +199,18 @@ class _StationDetailsScreenState extends State<StationDetailsScreen> {
                       backgroundColor: Colors.deepPurple,
                     ),
                   );
+                } else {
+                  // Navigator.of(context).pushReplacement(
+                  //   MaterialPageRoute(
+                  //     builder: (context) => BookingForm(
+                  //       sid: widget.,
+                  //       id: widget.id,
+                  //       ammount: totalCost,
+                  //       stationName: widget.stationName,
+                  //     ),
+                  //   ),
+                  // );
                 }
-                  // Handle payment logic
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => BookingForm(
-                      id: widget.id,
-                      ammount: totalCost,
-                      stationName: widget.stationName,
-                    ),
-                  ),
-                );
               },
               child: Row(
                 mainAxisSize: MainAxisSize.min,

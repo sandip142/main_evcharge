@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';  // Import for loading animation
 import 'package:geolocator/geolocator.dart';
 import 'package:main_evcharge/Screen/Stations_screen.dart';
 import 'package:main_evcharge/data/current_lacation_store.dart';
-  // Import the StationScreen
 
 class LocationPage extends StatefulWidget {
   @override
@@ -10,57 +10,74 @@ class LocationPage extends StatefulWidget {
 }
 
 class _LocationPageState extends State<LocationPage> {
-  String locationMessage = 'Fetching location...';
+  bool _isLoading = true;  // Track loading state
 
   @override
   void initState() {
     super.initState();
-    _checkPermissionsAndGetLocation(); // Request location on app start
+    _checkPermissionsAndGetLocation();  // Start location fetch on launch
   }
 
   Future<void> _checkPermissionsAndGetLocation() async {
     while (true) {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        setState(() {
-          locationMessage = 'Please enable location services.';
-        });
-        return;
+        await _showLocationServicesDialog();
+        continue;
       }
 
       LocationPermission permission = await Geolocator.checkPermission();
-
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          await _showPermissionDialog();
-          continue; // Keep asking for permission
-        }
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        await _showPermissionDialog();
+        continue;
       }
 
-      if (permission == LocationPermission.deniedForever) {
-        setState(() {
-          locationMessage = 'Location permission is permanently denied.';
-        });
-        return;
-      }
-
-      _getCurrentLocation(); // Fetch location if permission is granted
+      await _getCurrentLocation();  // Fetch location if everything is set
       break;
     }
+  }
+
+  Future<void> _showLocationServicesDialog() async {
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Enable Location Services'),
+        content: const Text(
+            'Please enable location services to use this feature.'),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              await Geolocator.openLocationSettings();
+              Navigator.of(context).pop();
+            },
+            child: const Text('Open Settings'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _showPermissionDialog() async {
     await showDialog(
       context: context,
+      barrierDismissible: false,  // Prevent dismissal without action
       builder: (context) => AlertDialog(
         title: const Text('Location Permission Required'),
         content: const Text(
             'This app needs location access to function properly. Please allow location permission.'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+            onPressed: () async {
+              Navigator.of(context).pop();  // Close the dialog
+              LocationPermission permission =
+                  await Geolocator.requestPermission();
+
+              if (permission == LocationPermission.deniedForever) {
+                await Geolocator.openAppSettings();
+              }
+            },
+            child: const Text('Allow Permission'),
           ),
         ],
       ),
@@ -73,16 +90,20 @@ class _LocationPageState extends State<LocationPage> {
         desiredAccuracy: LocationAccuracy.high,
       );
 
-      // Store latitude and longitude using LocationStorage
+      // Store the latitude and longitude in LocationStorage
       LocationStorage().setLocation(position.latitude, position.longitude);
+      print("User Lat: ${position.latitude}");
+      print("User Long: ${position.longitude}");
 
-      // Navigate to the next page (StationScreen)
-     Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const StationsScreen(),
-        ));
+      // Navigate to the next page (StationsScreen)
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const StationsScreen()),
+      );
     } catch (e) {
+      print('Failed to get location: $e');
+    } finally {
       setState(() {
-        locationMessage = 'Failed to get location: $e';
+        _isLoading = false;  // Stop the loading animation
       });
     }
   }
@@ -90,15 +111,23 @@ class _LocationPageState extends State<LocationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Location on App Load'),
-      ),
-      body: Center(
-        child: Text(
-          locationMessage,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 18),
-        ),
+      appBar: AppBar(),
+      body: Stack(
+        children: [
+          // Transparent background loading screen
+          if (_isLoading)
+            Positioned.fill(
+              child: Container(
+              //  color: Colors.black.withOpacity(0.5),  // Transparent background
+                child: const Center(
+                  child: SpinKitFadingFour(  // Dotted loading indicator
+                    color: Color.fromARGB(255, 134, 92, 206),
+                    size: 50.0,
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

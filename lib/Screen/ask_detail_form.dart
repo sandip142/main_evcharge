@@ -5,10 +5,12 @@ import 'package:table_calendar/table_calendar.dart';
 
 class BookingForm extends StatefulWidget {
   final String id;
+  final String sid;
   final double ammount;
   final String stationName;
   const BookingForm({
     super.key,
+    required this.sid,
     required this.id,
     required this.ammount,
     required this.stationName,
@@ -96,6 +98,7 @@ class _BookingFormState extends State<BookingForm> {
                     String bookingEndTime =
                         '${_endTime.hour}:${_endTime.minute}';
                     Map<String, dynamic> bookingData = {
+                      'standNumber':widget.sid,
                       'stationId': widget.id,
                       'stationName': widget.stationName,
                       'name': _nameController.text,
@@ -109,6 +112,7 @@ class _BookingFormState extends State<BookingForm> {
                       'amount': widget.ammount,
                     };
 
+                    print(bookingData['standNumber']);
                     // Navigate to Payment Page
                     Navigator.push(
                       context,

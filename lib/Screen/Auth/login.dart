@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:main_evcharge/Screen/Location/current_location.dart';
 import 'package:main_evcharge/Screen/Stations_screen.dart';
 
 
@@ -60,7 +61,7 @@ class LoginScreen extends StatelessWidget {
       onSignup: _signupUser,
       onSubmitAnimationCompleted: () {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const StationsScreen(),
+          builder: (context) => LocationPage() //const StationsScreen(),
         ));
       },
       onRecoverPassword: _recoverPassword,

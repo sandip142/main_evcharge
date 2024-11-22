@@ -1,15 +1,78 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:main_evcharge/Utils.dart/ApiKeys.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
-
-
 class _ProfilePageState extends State<ProfilePage> {
+  String? name;
+  String? email;
+  String? phone;
+  String? description;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserProfile();
+  }
+
+  Future<void> _saveUserProfile({
+    required String name,
+    required String phone,
+    required String description,
+  }) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .set({
+          'name': name,
+          'email': user.email, // Save the email from FirebaseAuth
+          'phone': phone,
+          'description': description,
+        });
+
+        print('User profile saved successfully.');
+      }
+    } catch (e) {
+      print('Error saving user profile: $e');
+    }
+  }
+
+  Future<void> _fetchUserProfile() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        DocumentSnapshot<Map<String, dynamic>> snapshot =
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc(user.uid)
+                .get();
+
+        if (snapshot.exists) {
+          setState(() {
+            name = snapshot.data()?['name'] ?? 'Name not available';
+            email = user.email;
+            phone = snapshot.data()?['phone'] ?? 'Phone not available';
+            description =
+                snapshot.data()?['description'] ?? 'No description provided';
+          });
+        } else {
+          print('User profile not found. Please complete your profile.');
+        }
+      }
+    } catch (e) {
+      print('Error fetching user profile: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +80,19 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Stack(
           children: [
             _Background(),
-            _ProfileInfo(),
+            _ProfileInfo(
+              name: name ?? 'Loading...',
+              email: email ?? 'Loading...',
+              phone: phone ?? 'Loading...',
+              description: description ?? 'Loading...',
+              onSaveProfile: (name, phone, description) {
+                _saveUserProfile(
+                  name: name,
+                  phone: phone,
+                  description: description,
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -43,15 +118,61 @@ class _Background extends StatelessWidget {
 }
 
 class _ProfileInfo extends StatelessWidget {
+  final String name;
+  final String email;
+  final String phone;
+  final String description;
+  final void Function(String, String, String) onSaveProfile;
+
+  const _ProfileInfo({
+    required this.name,
+    required this.email,
+    required this.phone,
+    required this.description,
+    required this.onSaveProfile,
+  });
+
   @override
   Widget build(BuildContext context) {
+    final TextEditingController nameController =
+        TextEditingController(text: name);
+    final TextEditingController phoneController =
+        TextEditingController(text: phone);
+    final TextEditingController descriptionController =
+        TextEditingController(text: description);
+
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _ProfileImage(),
           const SizedBox(height: 20),
-          _ProfileDetails(),
+          TextField(
+            controller: nameController,
+            decoration: const InputDecoration(labelText: 'Name'),
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            controller: phoneController,
+            decoration: const InputDecoration(labelText: 'Phone'),
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            controller: descriptionController,
+            decoration: const InputDecoration(labelText: 'Description'),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              onSaveProfile(
+                nameController.text,
+                phoneController.text,
+                descriptionController.text,
+              );
+            },
+            child: const Text('Save Profile'),
+          ),
         ],
       ),
     );
@@ -63,7 +184,7 @@ class _ProfileImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipOval(
       child: Image.asset(
-        'assets/image/profile.jpg', // Replace with profile image URL
+        'assets/image/profile.jpg',
         width: 100,
         height: 100,
         fit: BoxFit.cover,
@@ -71,88 +192,3 @@ class _ProfileImage extends StatelessWidget {
     );
   }
 }
-
-class _ProfileDetails extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const Column(
-      children: [
-        Text(
-          'John Doe', // Replace with profile name
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 10),
-        Text(
-          'johndoe@example.com', // Replace with profile email
-          style: TextStyle(fontSize: 16),
-        ),
-        SizedBox(height: 10),
-        Text(
-          '+1 123 456 7890', // Replace with profile phone number
-          style: TextStyle(fontSize: 16),
-        ),
-        SizedBox(height: 20),
-        Text(
-          'This is a description about John Doe.', // Replace with profile description
-          style: TextStyle(fontSize: 16),
-          textAlign: TextAlign.center,
-        ),
-      ],
-    );
-  }
-}
-
-class ProfilScreenState extends State<ProfilePage> with TickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    _animation = Tween<double>(begin: 0, end: 1).animate(_animationController);
-    _animationController.forward();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          _Background(),
-          AnimatedOpacity(
-            opacity: _animation.value,
-            duration: const Duration(milliseconds: 500),
-            child: _ProfileInfo(),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-
-// class _ProfileImages extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       width: 100,
-//       height: 100,
-//       decoration: const BoxDecoration(
-//         shape: BoxShape.circle,
-//         color: Colors.blue,
-//       ),
-//       child: const Center(
-//         child: Text(
-//           'JD', // Replace with logo text
-//           style: TextStyle(fontSize: 40, color: Colors.white),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-

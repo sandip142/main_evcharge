@@ -60,15 +60,28 @@ class _PaymentPageState extends State<PaymentPage> {
           .collection('bookings')
           .add(widget.bookingData);
       String bookingId = bookingRef.id; // Get the generated booking ID
+ 
+         print("in Payment Screen :- ${widget.bookingData['standNumber']}");
+       await FirebaseFirestore.instance
+        .collection('stations') // Replace with your main collection name
+        .doc(widget.bookingData['stationId']) // Parent document ID
+        .collection('ports') // Replace with your sub-collection name
+        .doc(widget.bookingData['standNumber']).update({
+      'busy': true,
+    }); // Sub-collection document ID
+
+    // Update the 'busy' field to true
+   
 
       // Store the bookingId in the station's bookings array
       await FirebaseFirestore.instance
           .collection('stations')
           .doc(widget.bookingData['stationId'])
           .update({
-        'isBook': true,
         'bookingIds': FieldValue.arrayUnion([bookingId]), // Add to the array
       });
+
+      
 
       // Show success message
       Fluttertoast.showToast(

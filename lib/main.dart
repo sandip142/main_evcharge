@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:main_evcharge/Screen/Splace/splace_screen.dart';
-import 'package:main_evcharge/Screen/timer_flutter.dart';
 import 'package:main_evcharge/firebase_options.dart';
 
 void main() async {
@@ -25,7 +24,7 @@ class MyApp extends StatelessWidget {
           ),
           useMaterial3: true,
         ),
-        home: const SplashScreen()//GoogleMapPage()//MapPage()//StationsScreen(),
+        home: const SplashScreen()//StationsScreen() //GoogleMapPage()//MapPage()
         );
   }
 }
