@@ -105,46 +105,48 @@ class _StationsScreenState extends State<StationsScreen> {
           ? const Center(
               child: SpinKitFadingFour(
                 // Dotted loading indicator
-                color:Color.fromARGB(255, 134, 92, 206),
+                color: Color.fromARGB(255, 134, 92, 206),
                 size: 50.0,
               ),
             ) // Show loader while fetching data
           : ListView.builder(
               itemCount: st.chargingStations.length,
               itemBuilder: (context, index) {
-                // Calculate the distance between current location and the station
+              print(st.chargingStations[index].isVerified);
                 double distance = DistanceCalcutator.calculateDistance(
                   latitude ?? Const.userLatitude,
                   longitude ?? Const.userLongitude,
                   st.chargingStations[index].latitude,
                   st.chargingStations[index].longitude,
                 );
-
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            DetailScreen(id: st.chargingStations[index].id),
+                if (st.chargingStations[index].isVerified) {
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              DetailScreen(id: st.chargingStations[index].id),
+                        ),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ChargingStationCard(
+                        stationName: st.chargingStations[index].stationName,
+                        location: st.chargingStations[index].stationAddress,
+                        distance: distance.toDouble(),
+                        imagePath: img.imagepaths[index %
+                            img.imagepaths.length], // Prevent index overflow
+                        rating: 4.5,
+                        powerOutput: st.chargingStations[index].powerOutput,
+                        chargerType: st.chargingStations[index].chargerType,
+                        isBook: st.chargingStations[index].isBook,
                       ),
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ChargingStationCard(
-                      stationName: st.chargingStations[index].stationName,
-                      location: st.chargingStations[index].stationAddress,
-                      distance: distance.toDouble(),
-                      imagePath: img.imagepaths[index %
-                          img.imagepaths.length], // Prevent index overflow
-                      rating: 4.5,
-                      powerOutput: st.chargingStations[index].powerOutput,
-                      chargerType: st.chargingStations[index].chargerType,
-                      isBook: st.chargingStations[index].isBook,
                     ),
-                  ),
-                );
+                  );
+                }
+               
               },
             ),
     );

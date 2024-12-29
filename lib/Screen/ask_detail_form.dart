@@ -8,12 +8,14 @@ class BookingForm extends StatefulWidget {
   final String sid;
   final double ammount;
   final String stationName;
+  //final String uid;
   const BookingForm({
     super.key,
     required this.sid,
     required this.id,
     required this.ammount,
     required this.stationName,
+ //   required this.uid,
   });
 
   @override
@@ -98,6 +100,7 @@ class _BookingFormState extends State<BookingForm> {
                     String bookingEndTime =
                         '${_endTime.hour}:${_endTime.minute}';
                     Map<String, dynamic> bookingData = {
+                    //  'UserUuid':widget.uid,
                       'standNumber':widget.sid,
                       'stationId': widget.id,
                       'stationName': widget.stationName,

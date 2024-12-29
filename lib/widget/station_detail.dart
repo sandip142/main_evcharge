@@ -19,6 +19,8 @@ class StationDetailsScreen extends StatefulWidget {
   final int numberOfChargers;
   final double powerOutput;
   final bool isBook;
+  //final String uid;
+  //final bool isVerified;
   const StationDetailsScreen({
     super.key,
     required this.id,
@@ -32,6 +34,8 @@ class StationDetailsScreen extends StatefulWidget {
     required this.numberOfChargers,
     required this.powerOutput,
     required this.isBook,
+   // required this.uid,
+   // required this.isVerified,
   });
 
   @override
@@ -84,6 +88,7 @@ class _StationDetailsScreenState extends State<StationDetailsScreen> {
                   print("stand$index");
                   return ChargingPoint(
                     mid: widget.id,
+                    //uid: widget.uid,
                     sid: "stand$index",
                     totalCost: totalCost,
                     stationName: widget.stationName,
@@ -125,7 +130,12 @@ class _StationDetailsScreenState extends State<StationDetailsScreen> {
                       onTap: () {
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
-                              builder: (context) => const MapPage()),
+                              builder: (context) => MapPage(
+                                    dlat: widget.latitude,
+                                    dlong: widget.longitude,
+                                    slat: latitude ?? Const.userLatitude,
+                                    slong: widget.longitude,
+                                  )),
                         );
                       },
                       child: Container(

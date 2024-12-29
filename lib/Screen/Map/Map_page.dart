@@ -8,7 +8,18 @@ import 'package:main_evcharge/Utils.dart/ApiKeys.dart';
 import 'package:main_evcharge/Utils.dart/const.dart';
 
 class MapPage extends StatefulWidget {
-  const MapPage({Key? key}) : super(key: key);
+  const MapPage({
+    super.key,
+    required this.dlat,
+    required this.dlong,
+    required this.slat,
+    required this.slong,
+  });
+
+  final double dlat;
+  final double dlong;
+  final double slat;
+  final double slong;
 
   @override
   _MapPageState createState() => _MapPageState();
@@ -16,9 +27,9 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   final Completer<GoogleMapController> _mapController = Completer();
-  static LatLng SourceLacation =
-      LatLng(Const.userLatitude, Const.userLongitude);
-  static const LatLng destinationLacation = LatLng(19.1136, 72.8697);
+  // static LatLng SourceLacation =
+  //     LatLng(widget.sla,widget.slong);
+  //static  LatLng destinationLacation = LatLng(widget.dlat,widget.dlong);
 
   List<LatLng> polylineCoordinate = [];
 
@@ -39,9 +50,9 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
       googleApiKey: google_api_key,
       request: PolylineRequest(
-        origin: PointLatLng(SourceLacation.latitude, SourceLacation.longitude),
+        origin: PointLatLng(LatLng(widget.slat,widget.slong).latitude, LatLng(widget.slat,widget.slong).longitude),
         destination: PointLatLng(
-            destinationLacation.latitude, destinationLacation.longitude),
+           LatLng(widget.dlat,widget.dlong).latitude,  LatLng(widget.dlat,widget.dlong).longitude),
         mode: TravelMode.driving,
       ),
     );
@@ -80,35 +91,35 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
         title: const Text("Station Traker"),
         centerTitle: true,
       ),
-       body:
-       // currentLocation == null
-      //     ? const Center(
-      //         child: Text("loading"),
-      //       ):
-           GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: SourceLacation,
-                zoom: 13.5,
-              ),
-              polylines: {
-                Polyline(
-                  polylineId: PolylineId("routes"),
-                  points: polylineCoordinate,
-                  color: const Color.fromARGB(255, 17, 75, 123),
-                  //width: 6
-                ),
-              },
-              markers: {
-                Marker(
-                  markerId: MarkerId("source"),
-                  position: SourceLacation,
-                ),
-                const Marker(
-                    //to remove const here in future
-                    markerId: MarkerId("Destination"),
-                    position: destinationLacation),
-              },
-            ),
+      body:
+          // currentLocation == null
+          //     ? const Center(
+          //         child: Text("loading"),
+          //       ):
+          GoogleMap(
+        initialCameraPosition: CameraPosition(
+          target: LatLng(widget.slat,widget.slong),
+          zoom: 13.5,
+        ),
+        polylines: {
+          Polyline(
+            polylineId: PolylineId("routes"),
+            points: polylineCoordinate,
+            color: const Color.fromARGB(255, 17, 75, 123),
+            //width: 6
+          ),
+        },
+        markers: {
+          Marker(
+            markerId: MarkerId("source"),
+            position: LatLng(widget.slat,widget.slong),
+          ),
+           Marker(
+              //to remove const here in future
+              markerId: MarkerId("Destination"),
+              position:  LatLng(widget.dlat,widget.dlong)),
+        },
+      ),
     );
   }
 }

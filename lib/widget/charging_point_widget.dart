@@ -9,11 +9,13 @@ class ChargingPoint extends StatefulWidget {
     required this.sid,
     required this.totalCost,
     required this.stationName,
+    //required this.uid,
   });
   final String mid;
   final String sid;
   final double totalCost;
   final String stationName;
+  //final String uid;
 
   @override
   State<ChargingPoint> createState() => _ChargingPointState();
@@ -59,7 +61,8 @@ class _ChargingPointState extends State<ChargingPoint> {
                         sid: widget.sid,
                         id: widget.mid,
                         ammount: widget.totalCost,
-                        stationName: widget.stationName,
+                        stationName: widget.stationName, 
+                       // uid: '',
                       ),
                     ),
            );

@@ -29,6 +29,8 @@ class StationData {
           powerOutput: data['powerOutput'],
           isBook: data['isBook'],
           category: data['category'],
+        //  Uid: data['userUuid'],
+           isVerified:data['isVerified']
         );
       }).toList();
 

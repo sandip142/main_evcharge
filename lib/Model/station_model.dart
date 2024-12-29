@@ -11,6 +11,8 @@ class StationModel {
   final double powerOutput;
   final bool isBook;
   final String category;
+  //final String Uid;
+  final bool isVerified;
 
   StationModel({
     required this.id,
@@ -24,6 +26,8 @@ class StationModel {
     required this.numberOfChargers,
     required this.powerOutput,
     required this.category,
-    required this.isBook
+    required this.isBook,
+    //required this.Uid,
+   required this.isVerified,
   });
 }

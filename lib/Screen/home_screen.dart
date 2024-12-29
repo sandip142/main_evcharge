@@ -24,14 +24,14 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const MapPage()),
-                );
-              },
-              child: Text("map page"),
-            ),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.of(context).pushReplacement(
+            //       MaterialPageRoute(builder: (context) => const MapPage()),
+            //     );
+            //   },
+            //   child: Text("map page"),
+            // ),
             const Text(
               'Welcome to the Home Page!',
               style: TextStyle(fontSize: 24),

@@ -57,6 +57,8 @@ class _DetailScreenState extends State<DetailScreen> {
           chargerType: stationModel.chargerType,
           numberOfChargers: stationModel.numberOfChargers,
           powerOutput: stationModel.powerOutput,
+         // uid:stationModel.Uid,
+          //isVerified: stationModel.isVerified,
         ),
       ),
     );
